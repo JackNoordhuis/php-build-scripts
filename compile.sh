@@ -24,6 +24,7 @@ EXT_XDEBUG_VERSION="2.6.1"
 EXT_IGBINARY_VERSION="2.0.8"
 EXT_DS_VERSION="4257ed3f75d85a729cf711c94ff06f67fc4e3af2"
 EXT_CRYPTO_VERSION="5f26ac91b0ba96742cc6284cd00f8db69c3788b2"
+EXT_PROTOBUF_VERSION="55acbf5d7a75e4d370003f09c0105de0767b3cd7"
 
 function write_out {
 	echo "[$1] $2"
@@ -110,8 +111,9 @@ LD_PRELOAD=""
 
 COMPILE_POCKETMINE_CHUNKUTILS="no"
 COMPILE_GD="no"
+COMPILE_PROTOBUF="no"
 
-while getopts "::t:oj:srdlxzff:ugn" OPTION; do
+while getopts "::t:oj:srdlxzff:ugnp" OPTION; do
 
 	case $OPTION in
 		t)
@@ -158,6 +160,10 @@ while getopts "::t:oj:srdlxzff:ugn" OPTION; do
 		g)
 			echo "[opt] Will enable GD2"
 			COMPILE_GD="yes"
+			;;
+		p)
+			echo "[opt] Will compile with PHP Protobuf extension"
+			COMPILE_PROTOBUF="yes"
 			;;
 		n)
 			echo "[opt] Will not remove sources after completing compilation"
@@ -736,6 +742,12 @@ else
 	HAS_POCKETMINE_CHUNKUTILS=""
 fi
 
+if [ "$COMPILE_PROTOBUF" == "yes" ]; then
+	get_github_extension "php-protobuf" "$EXT_PROTOBUF_VERSION" "JackNoordhuis" "php-protobuf"
+	HAS_PROTOBUF=--enable-protobuf
+else
+	HAS_PROTOBUF=""
+fi
 
 echo -n "[PHP]"
 
@@ -823,6 +835,7 @@ $HAS_LEVELDB \
 $HAS_PROFILER \
 $HAS_DEBUG \
 $HAS_POCKETMINE_CHUNKUTILS \
+$HAS_PROTOBUF \
 --enable-mbstring \
 --enable-calendar \
 --enable-pthreads \
